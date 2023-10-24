@@ -4,6 +4,7 @@ import Avatar from "../../components/Avatar";
 import { Contact } from "../../types";
 import {
   styContactListDetailButton,
+  styContactListDetailButtonGroup,
   styContactListDetailContainer,
   styContactListDetailContent,
 } from "./style";
@@ -21,11 +22,11 @@ function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
   return (
     <div css={styContactListDetailContainer}>
       <div css={styContactListDetailButton}>
-        <button onClick={() => handleBack(null)}>Back</button>
-        <div>
-          <button onClick={() => handleFavorite(contact)}>{isFavorite ? 'Unfavorite': 'Favorite'}</button>
-          <button>Edit</button>
-          <button>Delete</button>
+        <button onClick={() => handleBack(null)}>🔙 Back</button>
+        <div css={styContactListDetailButtonGroup}>
+          <button onClick={() => handleFavorite(contact)}>{isFavorite ? '⭐️ Unfavorite': '🌟 Favorite'}</button>
+          <button>✏️ Edit</button>
+          <button>❌ Delete</button>
         </div>
       </div>
       <article css={styContactListDetailContent}>

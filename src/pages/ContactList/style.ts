@@ -66,5 +66,11 @@ export const styContactListDetailButton = css`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  gap: 0.2em;
   margin: 0.35em 1em;
+`;
+
+export const styContactListDetailButtonGroup = css`
+  display: flex;
+  gap: 0.2em;
 `;
