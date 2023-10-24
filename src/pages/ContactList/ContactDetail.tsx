@@ -1,4 +1,4 @@
-import {useContext} from 'react'
+import { useContext } from "react";
 
 import Avatar from "../../components/Avatar";
 import { Contact } from "../../types";
@@ -8,7 +8,7 @@ import {
   styContactListDetailContainer,
   styContactListDetailContent,
 } from "./style";
-import { ContactContext } from '../../contexts/List';
+import { ContactContext } from "../../contexts/List";
 
 interface ContactListDetailProps {
   contact: Contact;
@@ -16,17 +16,26 @@ interface ContactListDetailProps {
 }
 
 function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
-  const { favorite, handleFavorite } = useContext(ContactContext);
-  const isFavorite = favorite.includes(contact?.id)
+  const { favorite, handleFavorite, handleDelete } = useContext(ContactContext);
+  const isFavorite = favorite.includes(contact?.id);
 
   return (
     <div css={styContactListDetailContainer}>
       <div css={styContactListDetailButton}>
         <button onClick={() => handleBack(null)}>🔙 Back</button>
         <div css={styContactListDetailButtonGroup}>
-          <button onClick={() => handleFavorite(contact)}>{isFavorite ? '⭐️ Unfavorite': '🌟 Favorite'}</button>
+          <button onClick={() => handleFavorite(contact)}>
+            {isFavorite ? "⭐️ Unfavorite" : "🌟 Favorite"}
+          </button>
           <button>✏️ Edit</button>
-          <button>❌ Delete</button>
+          <button
+            onClick={() => {
+              handleDelete(contact);
+              handleBack(null);
+            }}
+          >
+            ❌ Delete
+          </button>
         </div>
       </div>
       <article css={styContactListDetailContent}>

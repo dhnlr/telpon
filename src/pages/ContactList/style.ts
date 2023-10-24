@@ -6,10 +6,10 @@ export const styContactListContainer = css`
 
 export const styContactListSidebarContainer = (props: any) => css`
   height: 100%;
-  width: 420px;
+  min-width: 420px;
   @media (max-width: 420px) {
-    width: 100%;
-    ${props && {display: 'none'}}
+    min-width: 100%;
+    ${props && { display: "none" }}
   }
 `;
 
@@ -22,7 +22,7 @@ export const styContactListSidebarNavigation = css`
 `;
 
 export const styContactListSidebarNavigationButton = css`
-  height: 3.2em;
+  min-height: 3.2em;
   font-size: 0.8em;
 `;
 

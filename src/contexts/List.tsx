@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 
-import { CONTACT_LIST } from "../helpers/graphql/queries";
+import { CONTACT_LIST, DELETE_CONTACT } from "../helpers/graphql/queries";
 import { Contact } from "../types";
 
 interface ContactCtx {
@@ -16,6 +16,7 @@ interface ContactCtx {
   setFavorite: (value: number[]) => void;
   handlePagination: (value: string) => void;
   handleFavorite: (value: Contact) => void;
+  handleDelete: (value: Contact) => void;
 }
 
 interface ContactProviderProps {
@@ -34,9 +35,14 @@ export const ContactContext = createContext<ContactCtx>({
   setFavorite: () => {},
   handlePagination: () => {},
   handleFavorite: () => {},
+  handleDelete: () => {},
 });
 
 const ContactProvider = ({ children }: ContactProviderProps) => {
+  const [deleteContactById] = useMutation(DELETE_CONTACT, {
+    refetchQueries: [CONTACT_LIST, "GetContactList"],
+  });
+
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
 
@@ -56,11 +62,11 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
 
   const handleFavorite = (contact: Contact) => {
     setFavorite((prev) => {
-      let newFavorite = null
+      let newFavorite = null;
       if (prev.includes(contact?.id)) {
-        newFavorite = prev.filter(p => p !== contact?.id)
+        newFavorite = prev.filter((p) => p !== contact?.id);
       } else {
-         newFavorite = [...prev, contact?.id];
+        newFavorite = [...prev, contact?.id];
       }
       localStorage.setItem("favorite", JSON.stringify(newFavorite));
       return newFavorite;
@@ -75,6 +81,17 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
       localStorage.setItem("favoriteData", JSON.stringify(newFavoriteData));
       return newFavoriteData;
     });
+  };
+
+  const handleDelete = (contact: Contact) => {
+    deleteContactById({
+      variables: {
+        id: contact?.id,
+      },
+    });
+    if (favorite.includes(contact?.id)) {
+      handleFavorite(contact);
+    }
   };
 
   let whereQuery: {
@@ -128,6 +145,7 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
     setFavorite,
     handlePagination,
     handleFavorite,
+    handleDelete,
   };
 
   return (
