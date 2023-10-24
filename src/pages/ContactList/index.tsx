@@ -1,98 +1,66 @@
-import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useContext, useState } from "react";
 
 import {
   styContactListContainer,
   styContactListListContainer,
   styContactListNavigation,
-  styContactListNavigationButton,
-  styContactListPagination,
-  styContactListSearchContainer,
-  styContactListSearchInput,
+  styContactListNavigationButtonAdd,
+  styContactListNavigationButtonFav,
 } from "./style";
 import List from "../../components/List";
-import { GET_CONTACT_LIST } from "../../helpers/graphql/queries";
-
-export interface Contact {
-  id: number;
-  first_name: string;
-  last_name: string;
-  phones: {
-    number: string;
-  }[];
-}
+import { Contact } from "../../types";
+import { ContactContext } from "../../contexts/List";
+import Pagination from "../../components/Pagination";
+import Search from "../../components/Search";
 
 function ContactList() {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState("");
-
-  const { loading, data } = useQuery(GET_CONTACT_LIST, {
-    variables: {
-      limit: 10,
-      offset: page * 10,
-      where: search
-        ? {
-            _or: [
-              { first_name: { _ilike: `%${search}%` } },
-              { last_name: { _ilike: `%${search}%` } },
-            ],
-          }
-        : {},
-    },
-  });
-
+  const {
+    data,
+    loading,
+    favoriteData,
+    handleFavorite,
+  } = useContext(ContactContext);
+  const [isFavorite, setIsFavorite] = useState(false);
   const listContact: Contact[] = data?.contact || [];
 
-  const handlePagination = (type: string) => {
-    switch (type) {
-      case "next":
-        setPage(page + 1);
-        break;
-      case "prev":
-        setPage(page - 1);
-        break;
-    }
+  const handleSetFavorite = () => {
+    setIsFavorite(!isFavorite);
   };
 
   return (
     <aside css={styContactListContainer}>
       <nav css={styContactListNavigation}>
-        <h1>Contacts</h1>
-        <button css={styContactListNavigationButton}>Add</button>
+        <h1>{isFavorite ? "Favorites" : "Contacts"}</h1>
+        <button
+          css={styContactListNavigationButtonFav}
+          onClick={handleSetFavorite}
+        >
+          {isFavorite ? "Reg" : "Fav"}
+        </button>
+        <button css={styContactListNavigationButtonAdd}>Add</button>
       </nav>
-      <section css={styContactListSearchContainer}>
-        <input
-          css={styContactListSearchInput}
-          type="search"
-          placeholder="Search name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </section>
+      {!isFavorite && <Search />}
       {loading && <p>Loading...</p>}
       {!loading && data && (
         <section css={styContactListListContainer}>
-          {listContact.map((contact) => (
-            <List
-              key={contact?.id}
-              name={contact?.first_name + " " + contact?.last_name}
-              phoneNumber={contact.phones[0].number}
-            />
-          ))}
+          {!isFavorite &&
+            listContact.map((contact) => (
+              <List
+                key={contact?.id}
+                contact={contact}
+                handleClick={handleFavorite}
+              />
+            ))}
+          {isFavorite &&
+            favoriteData.map((contact) => (
+              <List
+                key={contact?.id}
+                contact={contact}
+              />
+            ))}
         </section>
       )}
-      <section css={styContactListPagination}>
-        <button disabled={page === 0} onClick={() => handlePagination("prev")}>
-          Prev
-        </button>
-        <p>{page + 1}</p>
-        <button
-          disabled={listContact.length < 10}
-          onClick={() => handlePagination("next")}
-        >
-          Next
-        </button>
-      </section>
+      {!isFavorite && <Pagination />}
     </aside>
   );
 }

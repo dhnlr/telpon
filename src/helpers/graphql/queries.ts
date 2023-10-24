@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_CONTACT_LIST = gql(`
+export const CONTACT_LIST = gql(`
 query GetContactList (
     $limit: Int, 
     $offset: Int,

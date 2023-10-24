@@ -1,12 +1,14 @@
-import ContactList from './pages/ContactList'; 
+import ContactProvider from "./contexts/List";
+import ContactList from "./pages/ContactList";
 
 function App() {
-
   return (
     <>
-      <ContactList />
+      <ContactProvider>
+        <ContactList />
+      </ContactProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

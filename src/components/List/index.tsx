@@ -1,3 +1,4 @@
+import { Contact } from "../../types";
 import Avatar from "../Avatar";
 import {
   styListContainer,
@@ -6,17 +7,19 @@ import {
 } from "./style";
 
 interface ListProps {
-  name: string;
-  phoneNumber: string;
+  contact: Contact;
+  handleClick?: (value: Contact) => void;
 }
 
-function List({ name, phoneNumber }: ListProps) {
+function List({ contact, handleClick = () => {} }: ListProps) {
   return (
-    <div css={styListContainer}>
-      <Avatar initial={name[0]} />
+    <div css={styListContainer} onClick={() => handleClick(contact)}>
+      <Avatar initial={contact?.first_name[0]} />
       <div css={styListDetailContainer}>
-        <p css={styListParagraph}>{name}</p>
-        <p css={styListParagraph}>{phoneNumber}</p>
+        <p css={styListParagraph}>
+          {contact?.first_name + " " + contact?.last_name}
+        </p>
+        <p css={styListParagraph}>{contact.phones[0].number}</p>
       </div>
     </div>
   );
