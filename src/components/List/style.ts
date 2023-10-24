@@ -7,6 +7,15 @@ export const styListContainer = css`
   align-items: center;
   padding: 0.35em 1em;
   border-top: 1px solid black;
+  cursor: pointer;
+  &:hover {
+    background: #1a1a1a
+  }
+  @media (prefers-color-scheme: light) {
+    &:hover {
+      background: #f9f9f9
+    }
+  }
 `;
 
 export const styListDetailContainer = css`

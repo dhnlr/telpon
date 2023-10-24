@@ -19,7 +19,7 @@ function List({ contact, handleClick = () => {} }: ListProps) {
         <p css={styListParagraph}>
           {contact?.first_name + " " + contact?.last_name}
         </p>
-        <p css={styListParagraph}>{contact.phones[0].number}</p>
+        <p css={styListParagraph}>{contact?.phones[0]?.number}</p>
       </div>
     </div>
   );

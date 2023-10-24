@@ -7,7 +7,7 @@ function Avatar({ initial }: { initial: string }) {
         textAnchor="middle"
         alignmentBaseline="middle"
         x="50%"
-        y="60%"
+        y="63%"
       >
         {initial}
       </text>

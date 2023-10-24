@@ -1,14 +1,19 @@
 import { css } from "@emotion/react";
 
 export const styContactListContainer = css`
+  display: flex;
+`;
+
+export const styContactListSidebarContainer = (props: any) => css`
   height: 100%;
   width: 420px;
   @media (max-width: 420px) {
     width: 100%;
+    ${props && {display: 'none'}}
   }
 `;
 
-export const styContactListNavigation = css`
+export const styContactListSidebarNavigation = css`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -16,30 +21,50 @@ export const styContactListNavigation = css`
   padding: 0em 1em;
 `;
 
-export const styContactListNavigationButton = css`
+export const styContactListSidebarNavigationButton = css`
   height: 3.2em;
   font-size: 0.8em;
 `;
 
-export const styContactListNavigationButtonAdd = css(
+export const styContactListSidebarNavigationButtonAdd = css(
   {
     "&:before": {
       content: '"➕ "',
     },
   },
-  styContactListNavigationButton
+  styContactListSidebarNavigationButton
 );
 
-export const styContactListNavigationButtonFav = css(
+export const styContactListSidebarNavigationButtonFav = css(
   {
     "&:before": {
       content: '"🔁 "',
     },
   },
-  styContactListNavigationButton
+  styContactListSidebarNavigationButton
 );
 
-export const styContactListListContainer = css`
+export const styContactListSidebarListContainer = css`
   margin: 1em 0;
   width: 100%;
+`;
+
+export const styContactListDetailContainer = css`
+  width: 100%;
+`;
+
+export const styContactListDetailContent = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
+export const styContactListDetailButton = css`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.35em 1em;
 `;

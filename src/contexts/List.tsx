@@ -56,12 +56,22 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
 
   const handleFavorite = (contact: Contact) => {
     setFavorite((prev) => {
-      const newFavorite = [...prev, contact?.id];
+      let newFavorite = null
+      if (prev.includes(contact?.id)) {
+        newFavorite = prev.filter(p => p !== contact?.id)
+      } else {
+         newFavorite = [...prev, contact?.id];
+      }
       localStorage.setItem("favorite", JSON.stringify(newFavorite));
       return newFavorite;
     });
     setFavoriteData((prev) => {
-      const newFavoriteData = [...prev, contact];
+      let newFavoriteData = null;
+      if (prev.some((p) => p.id === contact?.id)) {
+        newFavoriteData = prev.filter(({ id }) => id !== contact?.id);
+      } else {
+        newFavoriteData = [...prev, contact];
+      }
       localStorage.setItem("favoriteData", JSON.stringify(newFavoriteData));
       return newFavoriteData;
     });
@@ -92,8 +102,12 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
   });
 
   const getFromLocalStorage = () => {
-    const favorite = localStorage["favorite"]? JSON.parse(localStorage["favorite"]) : [];
-    const favoriteData = localStorage["favoriteData"] ? JSON.parse(localStorage["favoriteData"]) : [];
+    const favorite = localStorage["favorite"]
+      ? JSON.parse(localStorage["favorite"])
+      : [];
+    const favoriteData = localStorage["favoriteData"]
+      ? JSON.parse(localStorage["favoriteData"])
+      : [];
     setFavorite(favorite);
     setFavoriteData(favoriteData);
   };
