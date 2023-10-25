@@ -13,7 +13,11 @@ interface ListProps {
 
 function List({ contact, handleClick = () => {} }: ListProps) {
   return (
-    <div css={styListContainer} onClick={() => handleClick(contact)}>
+    <div
+      data-testid={`contact-list-${contact?.id}`}
+      css={styListContainer}
+      onClick={() => handleClick(contact)}
+    >
       <Avatar initial={contact?.first_name[0]} />
       <div css={styListDetailContainer}>
         <p css={styListParagraph}>
