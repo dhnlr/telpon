@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, findByText } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 import "@testing-library/jest-dom";
 import { CONTACT_LIST } from "../../helpers/graphql/queries";
@@ -103,7 +103,7 @@ describe("ContactList", () => {
     expect(nextButton).toBeDisabled();
     expect(prevButton).toBeEnabled();
   });
-  it("Should render detail contact properly", async () => {
+  it("Should render contact detail properly", async () => {
     render(
       <MockedProvider mocks={mocks} addTypename={false}>
         <ContactProvider>
@@ -119,5 +119,54 @@ describe("ContactList", () => {
     expect(await screen.findByText("🌟 Favorite")).toBeInTheDocument();
     expect(await screen.findByText("✏️ Edit")).toBeInTheDocument();
     expect(await screen.findByText("❌ Delete")).toBeInTheDocument();
+  });
+
+  it("Should validate contact form properly", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <ContactProvider>
+          <ContactList />
+        </ContactProvider>
+      </MockedProvider>
+    );
+    expect(await screen.findByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findAllByText("Anak Gembala")).toHaveLength(10);
+    const add = screen.getByText("Add");
+    fireEvent.click(add);
+    expect(await screen.findByText("🔙 Back")).toBeInTheDocument();
+    expect(await screen.findByText("💾 Save")).toBeInTheDocument();
+
+    const firstName = await screen.findByLabelText('First Name')
+    fireEvent.change(firstName, {
+      target: {
+        value: '#',
+      }
+    })
+    expect(await screen.findByText("First name should only alphabetical")).toBeInTheDocument();
+    fireEvent.change(firstName, {
+      target: {
+        value: '',
+      }
+    })
+    expect(await screen.findByText("First name should not be empty")).toBeInTheDocument();
+
+    const phoneNumber = await screen.findByLabelText('Phone Number')
+    fireEvent.change(phoneNumber, {
+      target: {
+        value: '#',
+      }
+    })
+    expect(await screen.findByText("Phone number should only numeric")).toBeInTheDocument();
+    fireEvent.change(phoneNumber, {
+      target: {
+        value: '',
+      }
+    })
+    expect(await screen.findByText("Phone number should not be empty")).toBeInTheDocument();
+
+    fireEvent.click(await screen.findByText('❌'))
+    expect(screen.queryAllByLabelText('Phone Number')).toHaveLength(0)
+    fireEvent.click(await screen.findByText('Add Phone Number'))
+    expect(await screen.findAllByLabelText('Phone Number')).toHaveLength(1)
   });
 });
