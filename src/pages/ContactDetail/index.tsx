@@ -12,10 +12,15 @@ import { ContactContext } from "../../contexts/List";
 
 interface ContactListDetailProps {
   contact: Contact;
+  handleEdit: (value: Contact) => void;
   handleBack: (value: Contact | undefined) => void;
 }
 
-function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
+function ContactListDetail({
+  contact,
+  handleEdit,
+  handleBack,
+}: ContactListDetailProps) {
   const { favorite, handleFavorite, handleDelete } = useContext(ContactContext);
   const isFavorite = favorite.includes(contact?.id);
 
@@ -27,7 +32,7 @@ function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
           <button onClick={() => handleFavorite(contact)}>
             {isFavorite ? "⭐️ Unfavorite" : "🌟 Favorite"}
           </button>
-          <button>✏️ Edit</button>
+          <button onClick={() => handleEdit(contact)}>✏️ Edit</button>
           <button
             onClick={() => {
               handleDelete(contact);

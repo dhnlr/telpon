@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { Contact } from "../../types";
 import {
@@ -9,7 +9,13 @@ import {
   styContactFormContentPhoneContent,
 } from "./style";
 import { useMutation, useQuery } from "@apollo/client";
-import { CONTACT_LIST, CREATE_CONTACT } from "../../helpers/graphql/queries";
+import {
+  CONTACT_LIST,
+  CREATE_CONTACT,
+  UPDATE_CONTACT_PHONE,
+  UPDATE_CONTACT_USER,
+} from "../../helpers/graphql/queries";
+import { ContactContext } from "../../contexts/List";
 
 const nameRegex = /^[A-Za-z]+$/;
 const phoneRegex = /^(\d+)$/;
@@ -20,21 +26,50 @@ interface ContactFormProps {
 }
 
 function ContactForm({ contact, handleBack }: ContactFormProps) {
+  const isEdit = !!contact?.id;
+  const { favorite, setFavoriteData } = useContext(ContactContext);
+
   const [firstNameField, setFirstNameField] = useState<{
     value: string;
     error: string | null;
-  }>({ value: "", error: null });
+  }>({ value: contact ? contact.first_name : "", error: null });
   const [lastNameField, setLastNameField] = useState<{
     value: string;
     error: string | null;
-  }>({ value: "", error: null });
+  }>({ value: contact ? contact.last_name : "", error: null });
   const [phoneField, setPhoneField] = useState<
-    { number: string; error: string | null }[]
-  >([{ number: "", error: "" }]);
+    {
+      id?: string | number;
+      number: string;
+      error?: string | null;
+    }[]
+  >(
+    contact?.phones[0]?.number
+      ? contact?.phones
+      : [{ id: "", number: "", error: "" }]
+  );
   const [submitError, setSubmitError] = useState("");
 
   const { refetch: getContact } = useQuery(CONTACT_LIST, { skip: true });
   const [createContact] = useMutation(CREATE_CONTACT, {
+    refetchQueries: [CONTACT_LIST, "GetContactList"],
+    onError: (err) => {
+      setSubmitError(err.message);
+    },
+    onCompleted() {
+      handleBack();
+    },
+  });
+  const [updateUser] = useMutation(UPDATE_CONTACT_USER, {
+    refetchQueries: [CONTACT_LIST, "GetContactList"],
+    onError: (err) => {
+      setSubmitError(err.message);
+    },
+    onCompleted() {
+      handleBack();
+    },
+  });
+  const [updatePhone] = useMutation(UPDATE_CONTACT_PHONE, {
     refetchQueries: [CONTACT_LIST, "GetContactList"],
     onError: (err) => {
       setSubmitError(err.message);
@@ -87,7 +122,11 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
         },
       })
         .then(({ data }) => {
-          if (data.contact && data.contact.length > 0) {
+          if (
+            !contact?.id && data.contact
+              ? data.contact.length > 0
+              : !(data.contact.length === 1)
+          ) {
             setFirstNameField({
               value: firstNameField.value,
               error: "First name should be unique",
@@ -97,22 +136,80 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
               error: "Last name should be unique",
             });
           } else {
-            const phones = phoneField.map((field) => {
-              return { number: field.number };
-            });
-            console.log(phones);
-            createContact({
-              variables: {
-                first_name: firstNameField.value,
-                last_name: lastNameField.value,
-                phones,
-              },
-            });
+            if (isEdit) {
+              handleUpdateUser();
+              handleUpdatePhone();
+              handleUpdateFavorite();
+            } else {
+              handleCreateContact();
+            }
           }
         })
         .catch((err) => {
           setSubmitError(err?.message || "Failed to check name uniqueness");
         });
+    }
+  };
+
+  const handleCreateContact = () => {
+    const phones = phoneField.map((field) => {
+      return { number: field.number };
+    });
+    createContact({
+      variables: {
+        first_name: firstNameField.value,
+        last_name: lastNameField.value,
+        phones,
+      },
+    });
+  };
+
+  const handleUpdateUser = () => {
+    updateUser({
+      variables: {
+        id: contact?.id,
+        _set: {
+          first_name: firstNameField.value,
+          last_name: lastNameField.value,
+        },
+      },
+    });
+  };
+
+  const handleUpdatePhone = () => {
+    phoneField.map((field) => {
+      updatePhone({
+        variables: {
+          where: {
+            _eq: field.id,
+          },
+          _set: {
+            number: field?.number,
+          },
+        },
+      });
+    });
+  };
+
+  const handleUpdateFavorite = () => {
+    if (contact && favorite.includes(contact?.id)) {
+      const phones = phoneField.map((field) => {
+        return { number: field.number };
+      });
+      const favoriteData = localStorage["favoriteData"]
+        ? JSON.parse(localStorage["favoriteData"])
+        : [];
+      const favoriteDataIndex = favoriteData.findIndex(
+        (data: Contact) => data.id == contact?.id
+      );
+      favoriteData[favoriteDataIndex] = {
+        first_name: firstNameField?.value,
+        last_name: lastNameField?.value,
+        id: contact?.id,
+        phones,
+      };
+      localStorage.setItem("favoriteData", JSON.stringify(favoriteData));
+      setFavoriteData(favoriteData);
     }
   };
 
@@ -164,7 +261,7 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
       <div css={styContactFormButton}>
         <button onClick={() => handleBack()}>🔙 Back</button>
         <div>
-          <button onClick={handleSubmit}>💾 Save</button>
+          <button onClick={handleSubmit}>💾{isEdit ? " Edit" : " Save"}</button>
         </div>
       </div>
       <form css={styContactFormContent} onSubmit={(e) => e.preventDefault()}>
@@ -173,6 +270,7 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
         <input
           id="first_name"
           placeholder="First name"
+          value={firstNameField.value}
           onChange={(e) => handleChangeName("firstname", e.target.value)}
         />
         {firstNameField.error && <p>{firstNameField.error}</p>}
@@ -181,6 +279,7 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
         <input
           id="last_name"
           placeholder="Last name"
+          value={lastNameField.value}
           onChange={(e) => handleChangeName("lastname", e.target.value)}
         />
         {lastNameField.error && <p>{lastNameField.error}</p>}
@@ -202,15 +301,19 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
                 />
                 {field.error && <p>{field.error}</p>}
               </div>
-              <button type="button" onClick={() => handleRemovePhone(index)}>
-                ❌
-              </button>
+              {!isEdit && (
+                <button type="button" onClick={() => handleRemovePhone(index)}>
+                  ❌
+                </button>
+              )}
             </div>
           );
         })}
-        <button type="button" onClick={() => handleAddPhone()}>
-          Add Phone Number
-        </button>
+        {!isEdit && (
+          <button type="button" onClick={() => handleAddPhone()}>
+            Add Phone Number
+          </button>
+        )}
       </form>
     </div>
   );

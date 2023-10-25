@@ -8,16 +8,30 @@ import ContactForm from "../ContactForm";
 
 function ContactList() {
   const [selectedContact, setSelectedContact] = useState<Contact | undefined>();
+  const [editedContact, setEditedContact] = useState<Contact | undefined>();
   const [isForm, setIsForm] = useState<boolean>();
 
   const handleSetDetail = (contact: Contact) => {
-    setSelectedContact(contact)
-    setIsForm(false)
-  }
+    setSelectedContact(contact);
+    setIsForm(false);
+  };
+
+  const handleSetEdit = (contact: Contact) => {
+    setEditedContact(contact);
+    setIsForm(true);
+  };
+
   const handleSetForm = () => {
     setSelectedContact(undefined);
     setIsForm(true);
   };
+
+  const handleBack = () => {
+    setIsForm(false);
+    setEditedContact(undefined);
+    setSelectedContact(undefined)
+  };
+
   return (
     <main css={styContactListContainer}>
       <ContactListSidebar
@@ -25,16 +39,17 @@ function ContactList() {
         handleClickContact={handleSetDetail}
         handleClickAdd={handleSetForm}
       />
-      {selectedContact && !isForm && (
+      {selectedContact && !isForm && !editedContact?.id && (
         <ContactListDetail
           contact={selectedContact}
-          handleBack={setSelectedContact}
+          handleEdit={handleSetEdit}
+          handleBack={handleBack}
         />
       )}
-      {isForm && (
+      {(isForm || editedContact?.id) && (
         <ContactForm
-          contact={selectedContact}
-          handleBack={() => setIsForm(false)}
+          contact={editedContact}
+          handleBack={handleBack}
         />
       )}
     </main>

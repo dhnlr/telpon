@@ -14,6 +14,7 @@ interface ContactCtx {
   favorite: number[];
   favoriteData: Contact[];
   setFavorite: (value: number[]) => void;
+  setFavoriteData: (value: Contact[]) => void;
   handlePagination: (value: string) => void;
   handleFavorite: (value: Contact) => void;
   handleDelete: (value: Contact) => void;
@@ -46,6 +47,7 @@ export const ContactContext = createContext<ContactCtx>({
   favorite: [],
   favoriteData: [],
   setFavorite: () => {},
+  setFavoriteData: () => {},
   handlePagination: () => {},
   handleFavorite: () => {},
   handleDelete: () => {},
@@ -154,6 +156,7 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
     favorite,
     favoriteData,
     setFavorite,
+    setFavoriteData,
     handlePagination,
     handleFavorite,
     handleDelete,
