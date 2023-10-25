@@ -74,6 +74,66 @@ const mocks = [
     request: {
       query: CONTACT_LIST,
       variables: {
+        limit: 10,
+        offset: 0,
+        where: {
+          _or: undefined,
+          id: {
+            _nin: [1],
+          },
+        },
+      },
+    },
+    result: {
+      data: {
+        contact: Array.apply(null, Array(10)).map(function (_, i) {
+          let mockcontact = {
+            id: i,
+            contactId: i,
+            first_name: "Anak",
+            last_name: "Gembala",
+            phones: [{ id: i, number: "134567890" }],
+          };
+          return mockcontact;
+        }),
+      },
+    },
+  },
+  {
+    delay: 30,
+    request: {
+      query: CONTACT_LIST,
+      variables: {
+        limit: 10,
+        offset: 0,
+        where: {
+          _or: [
+            { first_name: { _ilike: `%Bapak%` } },
+            { last_name: { _ilike: `%Bapak%` } },
+          ],
+          id: undefined,
+        },
+      },
+    },
+    result: {
+      data: {
+        contact: [
+          {
+            id: 1,
+            contact1d: 1,
+            first_name: "Bapak",
+            last_name: "Gembala",
+            phones: [{ id: 1, number: "134567890" }],
+          },
+        ],
+      },
+    },
+  },
+  {
+    delay: 30,
+    request: {
+      query: CONTACT_LIST,
+      variables: {
         where: {
           _or: [{ first_name: { _ilike: "" } }, { last_name: { _ilike: "" } }],
         },
@@ -81,13 +141,15 @@ const mocks = [
     },
     result: {
       data: {
-        contact: [{
-          id: 1,
-          contact1d: 1,
-          first_name: "Anak",
-          last_name: "Gembala",
-          phones: [{ id: 1, number: "134567890" }],
-        }],
+        contact: [
+          {
+            id: 1,
+            contact1d: 1,
+            first_name: "Anak",
+            last_name: "Gembala",
+            phones: [{ id: 1, number: "134567890" }],
+          },
+        ],
       },
     },
   },
@@ -112,6 +174,7 @@ describe("ContactList", () => {
     expect(await screen.findAllByText("Anak Gembala")).toHaveLength(10);
     expect(await screen.findAllByText("134567890")).toHaveLength(10);
   });
+
   it("Should handle pagination properly", async () => {
     render(
       <MockedProvider mocks={mocks} addTypename={false}>
@@ -131,6 +194,7 @@ describe("ContactList", () => {
     expect(nextButton).toBeDisabled();
     expect(prevButton).toBeEnabled();
   });
+
   it("Should render contact detail properly", async () => {
     render(
       <MockedProvider mocks={mocks} addTypename={false}>
@@ -213,5 +277,65 @@ describe("ContactList", () => {
     expect(screen.queryAllByLabelText("Phone Number")).toHaveLength(0);
     fireEvent.click(await screen.findByText("Add Phone Number"));
     expect(await screen.findAllByLabelText("Phone Number")).toHaveLength(1);
+  });
+
+  it("Should render contact edit properly", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <ContactProvider>
+          <ContactList />
+        </ContactProvider>
+      </MockedProvider>
+    );
+    expect(await screen.findByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findAllByText("Anak Gembala")).toHaveLength(10);
+    const contact = await screen.findByTestId("contact-list-1");
+    fireEvent.click(contact);
+    const edit = await screen.findByText("✏️ Edit");
+    expect(edit).toBeInTheDocument();
+    fireEvent.click(edit);
+    expect(await screen.findByLabelText("First Name")).toHaveValue("Anak");
+    expect(await screen.findByLabelText("Last Name")).toHaveValue("Gembala");
+    expect(await screen.findByLabelText("Phone Number")).toHaveValue(
+      "134567890"
+    );
+  });
+
+  it("Should search contact properly", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <ContactProvider>
+          <ContactList />
+        </ContactProvider>
+      </MockedProvider>
+    );
+    expect(await screen.findByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findAllByText("Anak Gembala")).toHaveLength(10);
+    fireEvent.change(screen.getByPlaceholderText("Search name..."), {
+      target: {
+        value: "Bapak",
+      },
+    });
+    expect(await screen.findByText("Bapak Gembala")).toBeInTheDocument();
+  });
+
+  it("Should favorite contact properly", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <ContactProvider>
+          <ContactList />
+        </ContactProvider>
+      </MockedProvider>
+    );
+    expect(await screen.findByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findAllByText("Anak Gembala")).toHaveLength(10);
+    fireEvent.click(await screen.findByTestId("contact-list-1"));
+    fireEvent.click(await screen.findByText("🌟 Favorite"));
+    expect(await screen.findByText("⭐️ Unfavorite")).toBeInTheDocument();
+    fireEvent.click(await screen.findByText("🔙 Back"));
+    fireEvent.click(await screen.findByText("Fav"));
+    expect(await screen.findByText("Favorites")).toBeInTheDocument();
+    expect(await screen.findAllByText("Anak Gembala")).toHaveLength(1);
+    expect(await screen.findAllByText("134567890")).toHaveLength(1);
   });
 });

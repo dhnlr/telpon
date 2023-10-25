@@ -7,6 +7,7 @@ import {
   styContactFormContent,
   styContactFormContentPhoneContainer,
   styContactFormContentPhoneContent,
+  styContactFormError,
 } from "./style";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -259,31 +260,37 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
 
   return (
     <div css={styContactFormContainer}>
-      <div css={styContactFormButton}>
-        <button onClick={() => handleBack()}>🔙 Back</button>
-        <div>
-          <button onClick={handleSubmit}>💾{isEdit ? " Edit" : " Save"}</button>
-        </div>
-      </div>
       <form css={styContactFormContent} onSubmit={(e) => e.preventDefault()}>
-        {submitError && <p>{submitError}</p>}
+        <div css={styContactFormButton}>
+          <button onClick={() => handleBack()}>🔙 Back</button>
+          <button type="submit" onClick={handleSubmit}>
+            💾{isEdit ? " Edit" : " Save"}
+          </button>
+        </div>
+        {submitError && <p css={styContactFormError}>{submitError}</p>}
         <label htmlFor="first_name">First Name</label>
         <input
+          required
           id="first_name"
           placeholder="First name"
           value={firstNameField.value}
           onChange={(e) => handleChangeName("firstname", e.target.value)}
         />
-        {firstNameField.error && <p>{firstNameField.error}</p>}
+        {firstNameField.error && (
+          <p css={styContactFormError}>{firstNameField.error}</p>
+        )}
 
         <label htmlFor="last_name">Last Name</label>
         <input
+          required
           id="last_name"
           placeholder="Last name"
           value={lastNameField.value}
           onChange={(e) => handleChangeName("lastname", e.target.value)}
         />
-        {lastNameField.error && <p>{lastNameField.error}</p>}
+        {lastNameField.error && (
+          <p css={styContactFormError}>{lastNameField.error}</p>
+        )}
 
         {phoneField.map((field, index) => {
           return (
@@ -294,13 +301,14 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
               <div css={styContactFormContentPhoneContent}>
                 <label htmlFor={`phone-${index}`}>Phone Number</label>
                 <input
+                  required
                   id={`phone-${index}`}
                   type="phone"
                   placeholder="Phone number"
                   value={field.number || ""}
                   onChange={(e) => handleChangePhone(index, e)}
                 />
-                {field.error && <p>{field.error}</p>}
+                {field.error && <p css={styContactFormError}>{field.error}</p>}
               </div>
               {!isEdit && (
                 <button type="button" onClick={() => handleRemovePhone(index)}>

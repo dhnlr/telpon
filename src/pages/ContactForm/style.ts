@@ -10,8 +10,11 @@ export const styContactFormContent = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1em;
+  gap: 0.4em;
   padding: 0.2em;
+  & > label {
+    margin-top: 0.95em;
+  }
   & > input {
     border: 1px solid rgba(255, 255, 255, 0.87);
     border-radius: 8px;
@@ -28,12 +31,18 @@ export const styContactFormContent = css`
 `;
 
 export const styContactFormButton = css`
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   gap: 0.2em;
   margin: 0.35em 1em;
+`;
+
+export const styContactFormError = css`
+  color: #f03a17;
+  margin: 0;
 `;
 
 export const styContactFormContentPhoneContainer = css`
@@ -44,6 +53,9 @@ export const styContactFormContentPhoneContainer = css`
   & > button {
     width: 73%;
     align-self: center;
+  }
+  & > div > label {
+    margin-top: 0.95em;
   }
   & > div > input {
     border: 1px solid rgba(255, 255, 255, 0.87);
@@ -62,5 +74,5 @@ export const styContactFormContentPhoneContent = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1em;
+  gap: 0.4em;
 `;
