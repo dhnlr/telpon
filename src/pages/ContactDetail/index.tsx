@@ -12,7 +12,7 @@ import { ContactContext } from "../../contexts/List";
 
 interface ContactListDetailProps {
   contact: Contact;
-  handleBack: (value: Contact | null) => void;
+  handleBack: (value: Contact | undefined) => void;
 }
 
 function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
@@ -22,7 +22,7 @@ function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
   return (
     <div css={styContactListDetailContainer}>
       <div css={styContactListDetailButton}>
-        <button onClick={() => handleBack(null)}>🔙 Back</button>
+        <button onClick={() => handleBack(undefined)}>🔙 Back</button>
         <div css={styContactListDetailButtonGroup}>
           <button onClick={() => handleFavorite(contact)}>
             {isFavorite ? "⭐️ Unfavorite" : "🌟 Favorite"}
@@ -31,7 +31,7 @@ function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
           <button
             onClick={() => {
               handleDelete(contact);
-              handleBack(null);
+              handleBack(undefined);
             }}
           >
             ❌ Delete
@@ -43,7 +43,7 @@ function ContactListDetail({ contact, handleBack }: ContactListDetailProps) {
         <div>
           <h2>{contact?.first_name + " " + contact?.last_name}</h2>
           {contact?.phones.map((phone) => (
-            <p>{phone?.number}</p>
+            <p key={phone?.number}>{phone?.number}</p>
           ))}
         </div>
       </article>

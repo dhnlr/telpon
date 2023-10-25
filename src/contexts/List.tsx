@@ -23,6 +23,19 @@ interface ContactProviderProps {
   children: string | ReactNode;
 }
 
+interface WhereQuery {
+  _or:
+    | {
+        [key: string]: { _ilike: string };
+      }[]
+    | undefined;
+  id:
+    | {
+        _nin: number[];
+      }
+    | undefined;
+}
+
 export const ContactContext = createContext<ContactCtx>({
   loading: false,
   data: null,
@@ -94,10 +107,7 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
     }
   };
 
-  let whereQuery: {
-    _or: any;
-    id: any;
-  } = {
+  let whereQuery: WhereQuery = {
     _or: undefined,
     id: undefined,
   };
@@ -111,6 +121,7 @@ const ContactProvider = ({ children }: ContactProviderProps) => {
     whereQuery["id"] = { _nin: favorite };
   }
   const { loading, data } = useQuery(CONTACT_LIST, {
+    fetchPolicy: "network-only",
     variables: {
       limit: 10,
       offset: page * 10,

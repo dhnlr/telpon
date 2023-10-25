@@ -14,13 +14,15 @@ import Pagination from "../../components/Pagination";
 import Search from "../../components/Search";
 
 interface ContactListSidebarProps {
-  selectedContact: Contact | null;
+  isShow: boolean | undefined;
   handleClickContact: (value: Contact) => void;
+  handleClickAdd: () => void;
 }
 
 function ContactListSidebar({
-  selectedContact,
+  isShow,
   handleClickContact,
+  handleClickAdd,
 }: ContactListSidebarProps) {
   const { data, loading, favoriteData } = useContext(ContactContext);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -31,7 +33,7 @@ function ContactListSidebar({
   };
 
   return (
-    <aside css={styContactListSidebarContainer(!!selectedContact)}>
+    <aside css={styContactListSidebarContainer(!!isShow)}>
       <nav css={styContactListSidebarNavigation}>
         <h1>{isFavorite ? "Favorites" : "Contacts"}</h1>
         <button
@@ -40,7 +42,12 @@ function ContactListSidebar({
         >
           {isFavorite ? "Reg" : "Fav"}
         </button>
-        <button css={styContactListSidebarNavigationButtonAdd}>Add</button>
+        <button
+          css={styContactListSidebarNavigationButtonAdd}
+          onClick={handleClickAdd}
+        >
+          Add
+        </button>
       </nav>
       {!isFavorite && <Search />}
       {loading && <p>Loading...</p>}

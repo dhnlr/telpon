@@ -21,6 +21,26 @@ query GetContactList (
 }
 `);
 
+export const CREATE_CONTACT = gql(`
+mutation CreateContact(
+  $first_name: String!, 
+  $last_name: String!, 
+  $phones: [phone_insert_input!]!
+  ) {
+  insert_contact_one(
+    object: {
+        first_name: $first_name, 
+        last_name: $last_name, 
+        phones: { 
+            data: $phones
+          }
+      }
+  ) {
+  id
+  }
+}`
+);
+
 export const DELETE_CONTACT = gql(`
 mutation DeleteContact ( $id: Int! ) {
   delete_contact_by_pk( id: $id ){

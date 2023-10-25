@@ -5,9 +5,8 @@ export const styContactListSearchContainer = css`
 `;
 
 export const styContactListSearchInput = css`
-  width: 260px;
   border: 1px solid rgba(255, 255, 255, 0.87);
-  border-radius: 4px;
+  border-radius: 8px;
   display: block;
   padding: 9px 4px 9px 40px;
   width: 100%;
