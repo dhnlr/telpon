@@ -111,7 +111,7 @@ function ContactForm({ contact, handleBack }: ContactFormProps) {
     if (
       !firstNameField.error &&
       !lastNameField.error &&
-      !!phoneField[0]?.id &&
+      !!phoneField[0]?.number &&
       phoneField.filter((field) => !!field.error).length === 0
     ) {
       getContact({

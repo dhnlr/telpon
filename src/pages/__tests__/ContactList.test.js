@@ -164,6 +164,12 @@ describe("ContactList", () => {
     expect(await screen.findByText("🔙 Back")).toBeInTheDocument();
     expect(await screen.findByText("💾 Save")).toBeInTheDocument();
 
+    const phoneNumber = await screen.findByLabelText("Phone Number");
+    fireEvent.change(phoneNumber, {
+      target: {
+        value: "1",
+      },
+    });
     fireEvent.click(await screen.findByText("💾 Save"));
     expect(
       await screen.findByText("First name should be unique")
@@ -186,7 +192,6 @@ describe("ContactList", () => {
       await screen.findByText("First name should not be empty")
     ).toBeInTheDocument();
 
-    const phoneNumber = await screen.findByLabelText("Phone Number");
     fireEvent.change(phoneNumber, {
       target: {
         value: "#",
