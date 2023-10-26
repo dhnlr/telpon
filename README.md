@@ -1,22 +1,20 @@
 # Telpon - DHNLR
 
-This project for tokopedia recruitment
+Phone book application to save name and phone number
 
-## Expanding the ESLint configuration
+## Demo
+Visit [Telpon](https://telpon-dhnlr.vercel.app/)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Requirements (recommended)
+- node: `latest` or `lts`
 
-- Configure the top-level `parserOptions` property like this:
+**Install Node.js**: Our app is powered by [Node.js](https://nodejs.org/en/). We recommend you to install Node.js using [nvm](https://github.com/nvm-sh/nvm).
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+## Running the service locally
+1. Create `.env` file. Use example from `.env.example` and change the value.
+2. Run these command to start the project
+```bash
+$ npm i        # install all the deps (first time only, if there's no dep update)
+$ npm run dev  # start the service on local
 ```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. Open `localhost:3000` on your default browser and login to access the full website capability
