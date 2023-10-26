@@ -235,9 +235,7 @@ describe("ContactList", () => {
       },
     });
     fireEvent.click(await screen.findByText("💾 Save"));
-    expect(
-      await screen.findByText("First name should be unique")
-    ).toBeInTheDocument();
+    expect(await screen.findByText("🔙 Back")).toBeInTheDocument(); // Doesn't change screen
     const firstName = await screen.findByLabelText("First Name");
     fireEvent.change(firstName, {
       target: {

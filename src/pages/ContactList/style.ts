@@ -47,6 +47,6 @@ export const styContactListSidebarNavigationButtonFav = css(
 export const styContactListSidebarListContainer = css`
   margin: 1em 0;
   width: 100%;
-  height: calc(100vh - 300px); // vh - title - search - pagination
+  height: calc(100svh - 310px); // vh - title - search - pagination
   overflow-y: auto;
 `;
