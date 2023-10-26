@@ -17,4 +17,4 @@ Visit [Telpon](https://telpon-dhnlr.vercel.app/)
 $ npm i        # install all the deps (first time only, if there's no dep update)
 $ npm run dev  # start the service on local
 ```
-3. Open `localhost:3000` on your default browser and login to access the full website capability
+3. Open `localhost:5173` or `location shown on terminal` on your default browser and login to access the full website capability
