@@ -11,23 +11,23 @@ const manifest: Partial<VitePWAOptions> = {
 		description: "Telpon app for goto",
 		icons: [
 			{
-				src: "/android-chrome-192x192.png",
+				src: "/favicon.png",
 				sizes: "192x192",
 				type: "image/png",
 			},
 			{
-				src: "/android-chrome-512x512.png",
+				src: "/favicon.png",
 				sizes: "512x512",
 				type: "image/png",
 			},
 			{
-				src: "/apple-touch-icon.png",
+				src: "/favicon.png",
 				sizes: "180x180",
 				type: "image/png",
 				purpose: "apple touch icon",
 			},
 			{
-				src: "/maskable_icon.png",
+				src: "/favicon.png",
 				sizes: "225x225",
 				type: "image/png",
 				purpose: "any maskable",
@@ -48,12 +48,6 @@ export default defineConfig({
     react({
       jsxImportSource: "@emotion/react",
     }),
-    VitePWA({
-      manifest: manifest,
-      registerType: "autoUpdate",
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-      },
-    }),
+    VitePWA(manifest),
   ],
 });
